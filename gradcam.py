@@ -5,7 +5,7 @@ from PIL import Image
 from tensorflow.keras.applications.mobilenet_v2 import preprocess_input
 
 MODEL_PATH = "fish_freshness_model.keras"
-IMG_PATH =r"C:\Users\Hawwa Shadiya\Desktop\fish freshness\Freshness Fish Dataset\C1\C:\Users\Hawwa Shadiya\Desktop\fish freshness\Freshness Fish Dataset\C1\WIN_20241125_14_50_20_Pro.jpg"
+IMG_PATH =r"C:\Users\Hawwa Shadiya\Desktop\fish freshness\Freshness Fish Dataset\C3\WIN_20241117_11_59_44_Pro.jpg"
 IMG_SIZE = (224, 224)
 CLASS_NAMES = ["C1", "C2", "C3"]
 
@@ -58,5 +58,5 @@ ax[1].imshow(heat, cmap="jet"); ax[1].set_title("Grad-CAM heatmap")
 ax[2].imshow(overlay); ax[2].set_title(f"Predicted: {CLASS_NAMES[class_idx]} ({conf:.1f}%)")
 for a in ax: a.axis("off")
 plt.tight_layout()
-plt.savefig("gradcam_C1_img2.png", dpi=200)
+plt.savefig("gradcam_C3_correct1.png", dpi=200)
 plt.show()
