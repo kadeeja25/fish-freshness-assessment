@@ -67,7 +67,8 @@ inputs = layers.Input(shape=(224, 224, 3))
 
 # Data augmentation
 x = layers.RandomFlip("horizontal")(inputs)
-x = layers.RandomRotation(0.05)(x)
+x = layers.RandomRotation(0.1)(x)
+x = layers.RandomTranslation(0.1, 0.1)(x)
 
 # Preprocess images for MobileNetV2
 x = layers.Lambda(preprocess_input)(x)
@@ -104,23 +105,38 @@ history = model.fit(
     validation_data=validation_dataset,
     epochs=epochs
 )
+# Phase 2: fine-tune the top layers of MobileNetV2
+base_model.trainable = True
+for layer in base_model.layers[:-30]:
+    layer.trainable = False
 
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=1e-5),
+    loss="sparse_categorical_crossentropy",
+    metrics=["accuracy"]
+)
+
+history_ft = model.fit(
+    train_dataset,
+    validation_data=validation_dataset,
+    epochs=8
+)
 # Save the trained model
-model.save("fish_freshness_model.keras")
+model.save("fish_freshness_model_v3.keras")
 
 print("\nModel training completed!")
-print("Model saved as fish_freshness_model.keras")
+print("Model saved as fish_freshness_model_v3.keras")
 
 # Display final metrics
 print(
     "Final training accuracy:",
-    round(history.history["accuracy"][-1] * 100, 2),
+    round(history_ft.history["accuracy"][-1] * 100, 2),
     "%"
 )
 
 print(
     "Final validation accuracy:",
-    round(history.history["val_accuracy"][-1] * 100, 2),
+    round(history_ft.history["val_accuracy"][-1] * 100, 2),
     "%"
 )
 
