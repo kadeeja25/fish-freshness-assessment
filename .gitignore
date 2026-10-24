@@ -1,3 +1,5 @@
 venv/
 Freshness Fish Dataset/
 __pycache__/
+*.keras
+   
