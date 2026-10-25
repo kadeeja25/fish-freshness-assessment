@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fish Freshness Checker</title>
+<style>
+  body{font-family:system-ui,sans-serif;max-width:480px;margin:0 auto;padding:20px;background:#f4f7fa;color:#1a2b3c}
+  h1{font-size:1.4rem;text-align:center}
+  .card{background:#fff;border-radius:14px;padding:18px;box-shadow:0 2px 8px #0001;margin-top:16px}
+  img{width:100%;border-radius:10px;display:none;margin-bottom:12px}
+  button{width:100%;padding:12px;border:0;border-radius:10px;background:#0b6bcb;color:#fff;font-size:1rem;cursor:pointer}
+  button:disabled{background:#9bb}
+  input{margin-bottom:12px;width:100%}
+  .bar{background:#e3e9ef;border-radius:6px;height:10px;margin:4px 0 10px}
+  .bar div{height:100%;border-radius:6px;background:#0b6bcb}
+  .top{font-size:1.3rem;font-weight:700}
+  .warn{color:#b45309;font-size:.9rem;margin-top:8px}
+</style>
+</head>
+<body>
+<h1>🐟 Fish Freshness Checker</h1>
+<div class="card">
+  <input type="file" id="file" accept="image/*">
+  <img id="preview" alt="preview">
+  <button id="go" disabled>Check freshness</button>
+</div>
+<div class="card" id="result" style="display:none"></div>
+<script>
+const API = "http://127.0.0.1:8000/predict";
+// Replace these once your teammate tells you what C1, C2, C3 mean
+const LABELS = { C1: "C1", C2: "C2", C3: "C3" };
+
+const file = document.getElementById("file");
+const preview = document.getElementById("preview");
+const go = document.getElementById("go");
+const result = document.getElementById("result");
+
+file.onchange = () => {
+  const f = file.files[0];
+  if (!f) return;
+  preview.src = URL.createObjectURL(f);
+  preview.style.display = "block";
+  go.disabled = false;
+  result.style.display = "none";
+};
+
+go.onclick = async () => {
+  go.disabled = true;
+  go.textContent = "Analyzing...";
+  const form = new FormData();
+  form.append("file", file.files[0]);
+  try {
+    const res = await fetch(API, { method: "POST", body: form });
+    if (!res.ok) throw new Error("Server error " + res.status);
+    show(await res.json());
+  } catch (e) {
+    result.innerHTML = "<p>Could not get a result. Is the backend running?</p>";
+    result.style.display = "block";
+  }
+  go.disabled = false;
+  go.textContent = "Check freshness";
+};
+
+function show(d) {
+  var html = '<div class="top">' + LABELS[d.class] + ' (' + d.confidence + '%)</div>';
+  if (d.confidence < 60) {
+    html += '<p class="warn">Low confidence. Try a clearer, well-lit photo of the fish.</p>';
+  }
+  for (const [k, v] of Object.entries(d.probabilities)) {
+    html += '<div>' + LABELS[k] + ': ' + v + '%</div><div class="bar"><div style="width:' + v + '%"></div></div>';
+  }
+  result.innerHTML = html;
+  result.style.display = "block";
+}
+</script>
+</body>
+</html>
