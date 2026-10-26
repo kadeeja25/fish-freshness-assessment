@@ -122,10 +122,10 @@ history_ft = model.fit(
     epochs=8
 )
 # Save the trained model
-model.save("fish_freshness_model_v3.keras")
+model.save("fish_freshness_model_v4.keras")
 
 print("\nModel training completed!")
-print("Model saved as fish_freshness_model_v3.keras")
+print("Model saved as fish_freshness_model_v4.keras")
 
 # Display final metrics
 print(
