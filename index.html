@@ -27,9 +27,9 @@
 </div>
 <div class="card" id="result" style="display:none"></div>
 <script>
-const API = "http://127.0.0.1:8000/predict";
+const API = location.protocol === "file:" ? "http://127.0.0.1:8000/predict" : "/predict";
 // Replace these once your teammate tells you what C1, C2, C3 mean
-const LABELS = { C1: "C1", C2: "C2", C3: "C3" };
+const LABELS = { C1: "Fresh", C2: "Moderately fresh", C3: "Spoiled" };
 
 const file = document.getElementById("file");
 const preview = document.getElementById("preview");
