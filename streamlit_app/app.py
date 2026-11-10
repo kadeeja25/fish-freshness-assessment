@@ -21,7 +21,7 @@ model = load_model()
 file = st.file_uploader("Upload a fish photo", type=["jpg", "jpeg", "png"])
 if file:
     img = Image.open(file).convert("RGB")
-    st.image(img, use_container_width=True)
+    st.image(img, width="stretch")
     if st.button("Check freshness"):
         x = np.expand_dims(np.array(img.resize((224, 224)), dtype="float32"), 0)
         probs = model.predict(x, verbose=0)[0]
